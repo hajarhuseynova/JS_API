@@ -43,6 +43,8 @@ async function getData() {
     const deleteButton = document.createElement("button");
     deleteButton.className = "deleteButton";
     deleteButton.textContent = "delete";
+
+    //delete
     deleteButton.addEventListener("click", () => {
       fetch(`https://northwind.vercel.app/api/suppliers/${element.id}`, {
         method: "DELETE",
@@ -53,9 +55,12 @@ async function getData() {
         }
       });
     });
+
+    //update
     const updateButton = document.createElement("button");
     updateButton.className = "updateButton";
     updateButton.textContent = "update";
+    //listener
     updateButton.addEventListener("click", () => {
       contactNameAlert.style.opacity = "0";
       companyAlert.style.opacity = "0";
@@ -75,6 +80,7 @@ async function getData() {
           contactName.value,
           contactTitle.value
         );
+        resetInput();
       });
     });
     td.append(deleteButton, updateButton);
@@ -112,6 +118,16 @@ function addData(companyName, contactName, contactTitle) {
       const td = document.createElement("td");
       const deleteButton = document.createElement("button");
       deleteButton.textContent = "delete";
+      deleteButton.addEventListener("click", () => {
+        fetch(`https://northwind.vercel.app/api/suppliers/${data.id}`, {
+          method: "DELETE",
+        }).then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            tr.remove();
+          }
+        });
+      });
       const updateButton = document.createElement("button");
       updateButton.textContent = "update";
       tr.append(td);
@@ -119,7 +135,9 @@ function addData(companyName, contactName, contactTitle) {
       tbody.append(tr);
     });
 }
-async function editSupplier(id, companyName, contactName, contactTitle) {
+
+//edit
+async function editSupplier(id, companyName, contactName, contanctTitle) {
   const response = await fetch(
     `https://northwind.vercel.app/api/suppliers/${id}`,
     {
@@ -131,7 +149,7 @@ async function editSupplier(id, companyName, contactName, contactTitle) {
       body: JSON.stringify({
         companyName: companyName,
         contactName: contactName,
-        contactTitle: contactTitle,
+        contactTitle: contanctTitle,
       }),
     }
   )
@@ -140,15 +158,21 @@ async function editSupplier(id, companyName, contactName, contactTitle) {
     })
     .then((data) => {
       resetInput();
-      console.log(data);
-      tbody.innerHTML += `
-      <tr>
+      const tr = document.createElement("tr");
+      tr.innerHTML += `
         <td>${data.id}</td>
-        <td>${companyName.value}</td>
-        <td>${contactName.value}</td>
-        <td>${contactTitle.value}</td>
-      </tr>
+        <td>${data.companyName}</td>
+        <td>${data.contactName}</td>
+        <td>${data.contactTitle}</td>
     `;
+      const td = document.createElement("td");
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "delete";
+      const updateButton = document.createElement("button");
+      updateButton.textContent = "update";
+      tr.append(td);
+      td.append(deleteButton, updateButton);
+      tbody.append(tr);
     });
 }
 
