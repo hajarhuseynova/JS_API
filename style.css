@@ -8,6 +8,7 @@ input {
 }
 p {
   color: #7f5539;
+  font-size: 17px;
 }
 .inputs {
   display: flex;

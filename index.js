@@ -8,25 +8,28 @@ const companyAlert = document.getElementById("companyAlert");
 const contactNameAlert = document.getElementById("contactNameAlert");
 const contactTitleAlert = document.getElementById("contactTitleAlert");
 
-companyName.addEventListener("keyup", () => {
-  companyAlert.style.opacity = "1";
-  if (companyName.value.length != 0) {
-    companyAlert.style.opacity = "0";
-  }
-});
-contactName.addEventListener("keyup", () => {
-  contactNameAlert.style.opacity = "1";
-  if (contactName.value.length != 0) {
-    contactNameAlert.style.opacity = "0";
-  }
-});
-contactTitle.addEventListener("keyup", () => {
-  contactTitleAlert.style.opacity = "1";
-  if (contactTitle.value.length != 0) {
-    contactTitleAlert.style.opacity = "0";
-  }
-});
-
+function keyups() {
+  let regex = /[a-zA-Z0-9]/g;
+  companyName.addEventListener("keyup", () => {
+    companyAlert.style.opacity = "1";
+    if (regex.test(companyName.value)) {
+      companyAlert.style.opacity = "0";
+    }
+  });
+  contactName.addEventListener("keyup", () => {
+    contactNameAlert.style.opacity = "1";
+    if (regex.test(contactName.value)) {
+      contactNameAlert.style.opacity = "0";
+    }
+  });
+  contactTitle.addEventListener("keyup", () => {
+    contactTitleAlert.style.opacity = "1";
+    if (regex.test(contactTitle.value)) {
+      contactTitleAlert.style.opacity = "0";
+    }
+  });
+}
+keyups();
 async function getData() {
   let response = await fetch("https://northwind.vercel.app/api/suppliers/");
   let data = await response.json();
@@ -152,28 +155,7 @@ async function editSupplier(id, companyName, contactName, contanctTitle) {
         contactTitle: contanctTitle,
       }),
     }
-  )
-    .then((res) => {
-      return res.json();
-    })
-    .then((data) => {
-      resetInput();
-      const tr = document.createElement("tr");
-      tr.innerHTML += `
-        <td>${data.id}</td>
-        <td>${data.companyName}</td>
-        <td>${data.contactName}</td>
-        <td>${data.contactTitle}</td>
-    `;
-      const td = document.createElement("td");
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "delete";
-      const updateButton = document.createElement("button");
-      updateButton.textContent = "update";
-      tr.append(td);
-      td.append(deleteButton, updateButton);
-      tbody.append(tr);
-    });
+  );
 }
 
 saveButton.addEventListener("click", () => {
