@@ -6,7 +6,9 @@ input {
   padding: 5px;
   padding-left: 10px;
 }
-
+p {
+  color: #7f5539;
+}
 .inputs {
   display: flex;
   flex-direction: column;

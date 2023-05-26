@@ -4,6 +4,28 @@ const contactName = document.getElementById("contactName");
 const contactTitle = document.getElementById("contactTitle");
 const editButton = document.getElementById("editButton");
 const saveButton = document.getElementById("saveButton");
+const companyAlert = document.getElementById("companyAlert");
+const contactNameAlert = document.getElementById("contactNameAlert");
+const contactTitleAlert = document.getElementById("contactTitleAlert");
+
+companyName.addEventListener("keyup", () => {
+  companyAlert.style.opacity = "1";
+  if (companyName.value.length != 0) {
+    companyAlert.style.opacity = "0";
+  }
+});
+contactName.addEventListener("keyup", () => {
+  contactNameAlert.style.opacity = "1";
+  if (contactName.value.length != 0) {
+    contactNameAlert.style.opacity = "0";
+  }
+});
+contactTitle.addEventListener("keyup", () => {
+  contactTitleAlert.style.opacity = "1";
+  if (contactTitle.value.length != 0) {
+    contactTitleAlert.style.opacity = "0";
+  }
+});
 
 async function getData() {
   let response = await fetch("https://northwind.vercel.app/api/suppliers/");
