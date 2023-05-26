@@ -7,6 +7,7 @@ const saveButton = document.getElementById("saveButton");
 const companyAlert = document.getElementById("companyAlert");
 const contactNameAlert = document.getElementById("contactNameAlert");
 const contactTitleAlert = document.getElementById("contactTitleAlert");
+let selectedElementId = -1;
 
 function keyups() {
   let regex = /[a-zA-Z0-9]/g;
@@ -46,7 +47,6 @@ async function getData() {
     const deleteButton = document.createElement("button");
     deleteButton.className = "deleteButton";
     deleteButton.textContent = "delete";
-
     //delete
     deleteButton.addEventListener("click", () => {
       fetch(`https://northwind.vercel.app/api/suppliers/${element.id}`, {
@@ -58,7 +58,6 @@ async function getData() {
         }
       });
     });
-
     //update
     const updateButton = document.createElement("button");
     updateButton.className = "updateButton";
@@ -73,18 +72,7 @@ async function getData() {
       companyName.value = element.companyName;
       contactName.value = element.contactName;
       contactTitle.value = element.contactTitle;
-      editButton.addEventListener("click", () => {
-        saveButton.disabled = false;
-        saveButton.style.backgroundColor = "#7f5539";
-        fetch(`https://northwind.vercel.app/api/suppliers/${element.id}`);
-        editSupplier(
-          element.id,
-          companyName.value,
-          contactName.value,
-          contactTitle.value
-        );
-        resetInput();
-      });
+      selectedElementId = element.id;
     });
     td.append(deleteButton, updateButton);
     tr.append(td);
@@ -93,7 +81,7 @@ async function getData() {
 }
 getData();
 
-function addData(companyName, contactName, contactTitle) {
+function addData(companyName_, contactName_, contactTitle_) {
   fetch("https://northwind.vercel.app/api/suppliers/", {
     method: "POST",
     headers: {
@@ -101,9 +89,9 @@ function addData(companyName, contactName, contactTitle) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      companyName: companyName,
-      contactName: contactName,
-      contactTitle: contactTitle,
+      companyName: companyName_,
+      contactName: contactName_,
+      contactTitle: contactTitle_,
     }),
   })
     .then((res) => {
@@ -133,14 +121,32 @@ function addData(companyName, contactName, contactTitle) {
       });
       const updateButton = document.createElement("button");
       updateButton.textContent = "update";
+      updateButton.addEventListener("click", () => {
+        companyName.value = data.companyName;
+        contactName.value = data.contactName;
+        contactTitle.value = data.contactTitle;
+        selectedElementId = data.id;
+        editButton.addEventListener("click", () => {
+          saveButton.disabled = false;
+          saveButton.style.backgroundColor = "#7f5539";
+          console.log(1);
+          editSupplier(
+            data.id,
+            companyName.value,
+            contactName.value,
+            contactTitle.value
+          );
+          resetInput();
+        });
+      });
       tr.append(td);
       td.append(deleteButton, updateButton);
       tbody.append(tr);
     });
 }
 
-//edit
-async function editSupplier(id, companyName, contactName, contanctTitle) {
+async function editSupplier(id, companyName_, contactName_, contactTitle_) {
+  console.log(2);
   const response = await fetch(
     `https://northwind.vercel.app/api/suppliers/${id}`,
     {
@@ -150,13 +156,28 @@ async function editSupplier(id, companyName, contactName, contanctTitle) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        companyName: companyName,
-        contactName: contactName,
-        contactTitle: contanctTitle,
+        companyName: companyName_,
+        contactName: contactName_,
+        contactTitle: contactTitle_,
       }),
     }
   );
 }
+
+editButton.addEventListener("click", () => {
+  saveButton.disabled = false;
+  saveButton.style.backgroundColor = "#7f5539";
+  fetch(`https://northwind.vercel.app/api/suppliers/${selectedElementId}`);
+  editSupplier(
+    selectedElementId,
+    companyName.value,
+    contactName.value,
+    contactTitle.value
+  );
+  selectedElementId = -1;
+  resetInput();
+  getData();
+});
 
 saveButton.addEventListener("click", () => {
   if (
@@ -169,6 +190,10 @@ saveButton.addEventListener("click", () => {
   } else {
     fetch("https://northwind.vercel.app/api/suppliers/");
     addData(companyName.value, contactName.value, contactTitle.value);
+    resetInput();
+    companyAlert.style.opacity = "1";
+    contactNameAlert.style.opacity = "1";
+    contactTitleAlert.style.opacity = "1";
   }
 });
 
